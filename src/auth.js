@@ -4,6 +4,7 @@ import { auth,
     createUserWithEmailAndPassword,
     updateProfile,
     signInWithEmailAndPassword,
+    signInWithPopup
 } from './firebaseConfig'
 import { showToast } from './toast';
 
@@ -118,3 +119,16 @@ if (loginForm){
     })
         
 }
+
+// google sign in
+googleBtn.forEach(button => {
+    button.addEventListener("click", () => {
+        signInWithPopup(auth,googleProvider)
+        .then((result) => {
+            const user = result.user
+            // after loging in show them the main page
+            window.location.href = "index.html";
+            showToast(`Welcome, ${user.displayName}`,"success")
+        }).catch((err) =>  showToast(err.message,"error"))
+    })
+});
