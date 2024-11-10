@@ -33,3 +33,17 @@ export function showToast(message, type = "error") {
     // Add click event listener to the close button
     closeButton.addEventListener('click', hideToast);
 }
+
+
+
+// hide toast message
+export function hideToast() {
+    const toast = document.getElementById('toast');
+    const progressBar = toast.querySelector('.progress-bar');
+
+    // Hide the toast
+    toast.classList.remove('show');
+
+    // Reset the progress bar for the next toast display
+    progressBar.style.width = '0%';
+}
