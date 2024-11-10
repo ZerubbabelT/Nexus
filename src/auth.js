@@ -2,7 +2,8 @@ import { auth,
     googleProvider,
     onAuthStateChanged,
     createUserWithEmailAndPassword,
-    updateProfile
+    updateProfile,
+    signInWithEmailAndPassword,
 } from './firebaseConfig'
 import { showToast } from './toast';
 
@@ -85,4 +86,35 @@ if (signupForm){
             
         }
     })
+}
+
+// login
+if (loginForm){
+    loginForm.addEventListener("submit", async(e) => {
+        e.preventDefault()
+        // validating input
+        let email = loginForm.email.value
+        let password = loginForm.password.value
+
+        try {
+            const userCred = await signInWithEmailAndPassword(auth,email,password)
+            loginForm.reset()
+            const user = userCred.user
+            window.location.href = "index.html";
+            showToast(`Welcome, ${user.displayName}`,"success")
+        }
+        catch (error) {
+            // Handle specific error codes
+            if (error.code === 'auth/wrong-password') {
+                showToast("Incorrect password. Please try again.", "error");
+            } else if (error.code === 'auth/user-not-found') {
+                showToast("No account found with this email.", "error");
+            } else if (error.code === 'auth/invalid-credential') {
+                showToast("Invalid credentials. Please check your email and password format.", "error");
+            } else {
+                showToast(`Error: ${error.message}`, "error");
+            }
+        }
+    })
+        
 }
