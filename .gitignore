@@ -1,9 +1,11 @@
+# Ignore everything in the dist folder
+dist/*
+
+# But do not ignore index.html inside dist
+!dist/index.html
+
 # Node modules
 node_modules/
-
-# Build output, excluding index.html
-dist/
-!dist/index.html
 
 # Environment variables
 .env
