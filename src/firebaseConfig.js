@@ -1,6 +1,14 @@
 // firebaseConfig.js
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAuth,
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithEmailAndPassword, 
+  signInWithPopup, 
+  onAuthStateChanged,
+  signOut
+} from "firebase/auth";
 
 // Firebase configuration object using environment variables
 const firebaseConfig = {
@@ -22,4 +30,11 @@ const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
 // Export Firebase authentication and provider to use in other files
-export { auth, googleProvider };
+export { auth,
+  googleProvider,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithEmailAndPassword, 
+  signInWithPopup, 
+  onAuthStateChanged,
+  signOut };
