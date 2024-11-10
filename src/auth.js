@@ -4,7 +4,8 @@ import { auth,
     createUserWithEmailAndPassword,
     updateProfile,
     signInWithEmailAndPassword,
-    signInWithPopup
+    signInWithPopup,
+    signOut
 } from './firebaseConfig'
 import { showToast } from './toast';
 
@@ -14,6 +15,7 @@ const signupForm = document.querySelector(".signupForm");
 const googleBtn = document.querySelectorAll(".google-btn")
 const loadingScreen = document.getElementById("loading-screen");
 const mainContent = document.getElementById("main-content");
+const logoutBtn = document.querySelector(".logout");
 
 // Add a short delay to display loading screen before auth check
 setTimeout(() => {
@@ -132,3 +134,14 @@ googleBtn.forEach(button => {
         }).catch((err) =>  showToast(err.message,"error"))
     })
 });
+
+// sign out
+if (logoutBtn){
+    logoutBtn.addEventListener("click", () => {
+        signOut(auth).then(() => {
+            // after loging out show the form page
+            showToast("You have Signed out succefully","success")
+            window.location.href = "form.html";
+        })
+    })
+}
