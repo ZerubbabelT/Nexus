@@ -3,6 +3,7 @@ dist/*
 
 # But do not ignore index.html inside dist
 !dist/index.html
+!dist/form.html
 
 # Node modules
 node_modules/
