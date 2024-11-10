@@ -1,0 +1,25 @@
+# Node modules
+node_modules/
+
+# Build output, excluding index.html
+dist/
+!dist/index.html
+
+# Environment variables
+.env
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Optional cache and dependency management files
+package-lock.json
+yarn.lock
+
+# OS and IDE specific files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
