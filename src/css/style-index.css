@@ -143,12 +143,16 @@ main .container {
     column-gap: 2rem;
     position: relative;
 }
-
+.left::-webkit-scrollbar {
+    display: none;
+}
 /* =============== Left ============== */
 main .container .left {
-    height: max-content;
+    height:100vh;
+    overflow-y: auto;
     position: sticky;
     top: var(--sticky-top-left);
+    scrollbar-width: none;
 }
 
 main .container .left .profile {
