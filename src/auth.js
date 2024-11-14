@@ -26,7 +26,11 @@ setTimeout(() => {
             // Authenticated user
             if (currentPage === "form.html") {
                 window.location.href = "index.html";
-            } else {
+            } else if(currentPage === "index.html") {
+                const name = document.querySelector(".left .handle h4")
+                if(name){
+                    name.textContent = user.displayName;
+                }
                 loadingScreen.classList.add("fade-out"); // Add fade-out animation
                 setTimeout(() => {
                     loadingScreen.style.display = "none";
@@ -77,7 +81,7 @@ if (signupForm){
                 const user = userCred.user
 
                 await updateProfile(user,{
-                    displayName : name
+                    displayName : name,
                 })
                 showToast(`${name}, You have now created an account successfully!!`,"success")    
                 signupForm.reset()
