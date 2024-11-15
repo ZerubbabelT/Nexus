@@ -9,6 +9,17 @@ import { getAuth,
   onAuthStateChanged,
   signOut
 } from "firebase/auth";
+import { getDatabase,
+  ref,
+  push,
+  onChildAdded
+} from "firebase/database";
+import { getStorage,
+  ref as storageRef, 
+  uploadBytes, 
+  getDownloadURL, 
+  uploadBytesResumable
+} from "firebase/storage";
 
 // Firebase configuration object using environment variables
 const firebaseConfig = {
@@ -37,4 +48,16 @@ export { auth,
   signInWithEmailAndPassword, 
   signInWithPopup, 
   onAuthStateChanged,
-  signOut };
+  signOut,
+  
+  getDatabase,
+  ref,
+  push,
+  onChildAdded,
+  
+  getStorage,
+  ref as storageRef, 
+  uploadBytes, 
+  getDownloadURL, 
+  uploadBytesResumable
+ };
