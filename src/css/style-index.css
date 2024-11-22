@@ -360,7 +360,7 @@ main .container .left .profile {
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     margin-top: 1rem;
     background: var(--color-white);
     padding: 0.4rem var(--card-padding);
@@ -791,7 +791,7 @@ MEDIA QUERIES FOR SMALL TABLETS AND MOBILE PHONES
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: white;
+    background-color: transparent;
     padding: 0 15px;
   }
   .fileUploadWrapper {
@@ -848,7 +848,7 @@ MEDIA QUERIES FOR SMALL TABLETS AND MOBILE PHONES
     padding: 6px 10px;
     transition: all 0.3s;
   }
-  #messageInput {
+  .messageInput {
     width: 200px;
     height: 100%;
     background-color: transparent;
@@ -857,8 +857,8 @@ MEDIA QUERIES FOR SMALL TABLETS AND MOBILE PHONES
     padding-left: 10px;
     color: black;
   }
-  #messageInput:focus ~ #sendButton svg path,
-  #messageInput:valid ~ #sendButton svg path {
+  .messageInput:focus ~ #sendButton svg path,
+  .messageInput:valid ~ #sendButton svg path {
     fill: #3c3c3c;
     stroke: white;
   }
@@ -885,5 +885,138 @@ MEDIA QUERIES FOR SMALL TABLETS AND MOBILE PHONES
   #sendButton:hover svg path {
     fill: #3c3c3c;
     stroke: white;
+  }
+
+.feed .photo img,
+.feed .photo video {
+    width: 100%; /* Full width of the container */
+    height: 300px; /* Fixed height */
+    object-fit: cover; /* Ensures aspect ratio is maintained while filling the height */
+    border-radius: 10px; /* Optional: rounded corners */
+    cursor: pointer; /* Indicate clickable images/videos */
+    transition: transform 0.2s ease-in-out; /* Add hover effect */
+}
+.feed .photo img {
+    max-width: 100%; /* Ensure image does not overflow horizontally */
+    max-height: 500px; /* Set a maximum height to avoid overly large images */
+    object-fit: contain; /* Preserve aspect ratio without cropping */
+    border-radius: 8px; /* Optional: Add some styling to match the design */
+    display: block; /* Removes inline spacing issues */
+    margin: 0 auto; /* Center the image horizontally if smaller than the container */
+}
+
+.feed .photo img:hover,
+.feed .photo video:hover {
+    transform: scale(1.05); /* Slight zoom on hover */
+}
+/* Fullscreen modal for media (images only) */
+#media-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8); /* Dark transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    visibility: hidden; /* Initially hidden */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Media in the modal */
+#media-modal img {
+    max-width: 90%; /* Prevents overflow */
+    max-height: 90%; /* Fits within viewport */
+    object-fit: contain; /* Ensures aspect ratio is preserved */
+    border-radius: 10px; /* Optional rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+}
+
+/* Close button */
+#media-modal .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 2rem;
+    color: white;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+/* Modal visible */
+#media-modal.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.new-posts-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+}
+.buttonN {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgba(20, 20, 20, 0.5);
+    border: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 0px 4px rgba(180, 160, 255, 0.253);
+    cursor: pointer;
+    transition-duration: 0.3s;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .svgIcon {
+    width: 12px;
+    transition-duration: 0.3s;
+  }
+  
+  .svgIcon path {
+    fill: white;
+  }
+  
+  .buttonN:hover {
+    width: 140px;
+    border-radius: 50px;
+    transition-duration: 0.3s;
+    background-color: rgb(63, 63, 63);
+    align-items: center;
+  }
+  
+  .buttonN:hover .svgIcon {
+    /* width: 20px; */
+    transition-duration: 0.3s;
+    transform: translateY(-200%);
+  }
+  
+  .buttonN::before {
+    position: absolute;
+    bottom: -20px;
+    content: "New post";
+    color: white;
+    /* transition-duration: .3s; */
+    font-size: 0px;
+  }
+  
+  .buttonN:hover::before {
+    font-size: 13px;
+    opacity: 1;
+    bottom: unset;
+    /* transform: translateY(-30px); */
+    transition-duration: 0.3s;
   }
   

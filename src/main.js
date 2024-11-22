@@ -207,3 +207,25 @@ Bg3.addEventListener('click', () => {
     Bg2.classList.remove('active');
     changeBG();
 });
+// Modal elements
+const mediaModal = document.getElementById('media-modal');
+const closeModalBtn = document.querySelector('#media-modal .close-btn');
+const modalImage = mediaModal.querySelector('img');
+
+// Add click event listener to posted images only
+document.addEventListener('click', (e) => {
+    if (e.target.tagName === 'IMG' && e.target.closest('.feed .photo')) {
+        // Check if the clicked image is inside a post
+        const fileUrl = e.target.src;
+
+        // Show the modal
+        mediaModal.classList.add('show');
+        modalImage.src = fileUrl;
+    }
+});
+
+// Close modal on button click
+closeModalBtn.addEventListener('click', () => {
+    mediaModal.classList.remove('show');
+    modalImage.src = '';
+});
