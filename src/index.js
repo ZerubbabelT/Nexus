@@ -1,4 +1,5 @@
 import './firebaseConfig.js';
+import './toast.js'
 import './form.js';
 import './auth.js';
 import './handlePost.js';

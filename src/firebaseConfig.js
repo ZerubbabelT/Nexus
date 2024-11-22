@@ -12,7 +12,7 @@ import { getAuth,
 import { getDatabase,
   ref,
   push,
-  onChildAdded
+  onChildAdded,get,onValue
 } from "firebase/database";
 import { getStorage,
   ref as storageRef, 
@@ -38,6 +38,8 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Auth and Google Provider
 const auth = getAuth(app);
+const db = getDatabase(app);
+const storage = getStorage(app)
 const googleProvider = new GoogleAuthProvider();
 
 // Export Firebase authentication and provider to use in other files
@@ -50,13 +52,13 @@ export { auth,
   onAuthStateChanged,
   signOut,
   
-  getDatabase,
+  db,
   ref,
   push,
-  onChildAdded,
+  onChildAdded,get,onValue,
   
-  getStorage,
-  ref as storageRef, 
+  storage,
+  storageRef, 
   uploadBytes, 
   getDownloadURL, 
   uploadBytesResumable
