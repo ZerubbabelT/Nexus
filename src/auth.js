@@ -17,6 +17,7 @@ const loadingScreen = document.getElementById("loading-screen");
 const mainContent = document.getElementById("main-content");
 const logoutBtn = document.querySelector(".logout");
 
+
 // Add a short delay to display loading screen before auth check
 setTimeout(() => {
     onAuthStateChanged(auth, (user) => {
@@ -24,6 +25,13 @@ setTimeout(() => {
 
         if (user) {
             // Authenticated user
+
+            // dispatching custom event to notify handlePost.js for the user
+            const userAuthenticatedEvent = new CustomEvent('userAuthenticated', {
+                detail: user,
+            })
+            window.dispatchEvent(userAuthenticatedEvent)
+
             if (currentPage === "form.html") {
                 window.location.href = "index.html";
             } else if(currentPage === "index.html") {
@@ -85,7 +93,6 @@ if (signupForm){
                 })
                 showToast(`${name}, You have now created an account successfully!!`,"success")    
                 signupForm.reset()
-                
             }
             catch(error) {
                 showToast(`Error creating account: ${error.message}`,"error")
