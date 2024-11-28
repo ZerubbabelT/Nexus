@@ -36,12 +36,53 @@
             </div>
             <div class="create">
                 <label class="btn btn-primary" for="create-post">Create</label>
-                <div class="profile-photo">
+                <div class="profile-photo mainProfilePicture">
                     <img src="../src/css/images/profile-1.jpg" alt="">
                 </div>
+                
             </div>
         </div>
     </nav>
+    <div id="profileDropdown" class="profile-dropdown hidden">
+        <!-- Close Button -->
+        <button id="closeDropdown" class="close-btn">&times;</button>
+    
+        <!-- Profile Picture -->
+        <div class="profile-header">
+            <img
+                src="../src/css/images/profile-1.jpg"
+                alt="Profile Picture"
+                id="profilePicture"
+            />
+        </div>
+    
+        <!-- Welcome Message -->
+        <p id="profileName"></p>
+    
+    
+        <!-- Buttons -->
+        <div class="profile-actions">
+            <button id="updateProfileButton" class="profile-btn">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path
+                        fill="currentColor"
+                        d="M12,8A4,4 0 1,1 8,12A4,4 0 0,1 12,8M12,2A10,10 0 1,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z"
+                    />
+                </svg>
+                Update Profile
+            </button>
+            <button id="logoutButton" class="profile-btn logout">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path
+                        fill="currentColor"
+                        d="M14.08,15.59L16.67,13H7V11H16.67L14.08,8.41L15.5,7L20.5,12L15.5,17L14.08,15.59M5,19A2,2 0 0,1 3,17V7A2,2 0 0,1 5,5H11V7H5V17H11V19H5Z"
+                    />
+                </svg>
+                Logout
+            </button>
+        </div>
+    </div>
+    
 
     <!-------------------------------- MAIN ----------------------------------->
     <main>

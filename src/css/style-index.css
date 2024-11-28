@@ -1019,4 +1019,109 @@ MEDIA QUERIES FOR SMALL TABLETS AND MOBILE PHONES
     /* transform: translateY(-30px); */
     transition-duration: 0.3s;
   }
-  
+
+/* Profile Dropdown */
+.profile-dropdown {
+    width: 450px;
+    background: linear-gradient(145deg, #e9bafc, #d7c3e7);
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    animation: dropdown-slide 0.3s ease-in-out;
+    z-index: 100;
+}
+
+/* Hidden Class (Initially Hidden) */
+.hidden {
+    display: none;
+}
+
+/* Close Button */
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.close-btn:hover {
+    transform: scale(1.2);
+    color: #f44336;
+}
+
+/* Profile Picture */
+.profile-header img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: block;
+    border: 3px solid white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Welcome Message */
+#profileName {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+/* Buttons */
+.profile-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.profile-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45%;
+    padding: 10px;
+    background-color: rgb(107, 77, 230);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    gap: 5px;
+}
+
+.profile-btn:hover {
+    background-color: rgb(127, 102, 226);
+    transform: scale(1.05);
+}
+
+/* Icons */
+.icon {
+    width: 18px;
+    height: 18px;
+    fill: white;
+}
+
+/* Dropdown Slide Animation */
+@keyframes dropdown-slide {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
