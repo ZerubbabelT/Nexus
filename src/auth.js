@@ -36,8 +36,10 @@ setTimeout(() => {
                 window.location.href = "index.html";
             } else if(currentPage === "index.html") {
                 const name = document.querySelector(".left .handle h4")
+                const profileName = document.getElementById("profileName")
                 if(name){
                     name.textContent = user.displayName;
+                    profileName.textContent = `Hi, ${user.displayName}`;
                 }
                 loadingScreen.classList.add("fade-out"); // Add fade-out animation
                 setTimeout(() => {

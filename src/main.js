@@ -229,3 +229,18 @@ closeModalBtn.addEventListener('click', () => {
     mediaModal.classList.remove('show');
     modalImage.src = '';
 });
+
+// profile view dropdown
+const profilePicture = document.querySelector(".mainProfilePicture");
+const profileDropdown = document.getElementById("profileDropdown");
+const closeDropdown = document.getElementById("closeDropdown");
+
+// Toggle Dropdown on Profile Picture Click
+profilePicture.addEventListener("click", () => {
+    profileDropdown.classList.toggle("hidden");
+});
+
+// Close Dropdown on Close Button Click
+closeDropdown.addEventListener("click", () => {
+    profileDropdown.classList.add("hidden");
+});
