@@ -36,8 +36,8 @@
             </div>
             <div class="create">
                 <label class="btn btn-primary" for="create-post">Create</label>
-                <div class="profile-photo mainProfilePicture">
-                    <img src="../src/css/images/profile-1.jpg" alt="">
+                <div class="profile-photo mainProfilePicture" style="cursor: pointer;">
+                    <img src="../src/css/images/defaultProfile.webp" alt="profile-picture" id="mainProfileImage">
                 </div>
                 
             </div>
@@ -49,19 +49,18 @@
     
         <!-- Profile Picture -->
         <div class="profile-header">
-            <img
-                src="../src/css/images/profile-1.jpg"
-                alt="Profile Picture"
-                id="profilePicture"
-            />
+            <img src="../src/css/images/defaultProfile.webp" alt="Profile Picture" id="profilePictureDropdown" style="object-fit: cover;"/>
         </div>
     
         <!-- Welcome Message -->
         <p id="profileName"></p>
     
-    
         <!-- Buttons -->
         <div class="profile-actions">
+            <!-- Hidden File Input -->
+            <input type="file" id="profileFile" accept="image/*" style="display: none; width: 0px;" />
+    
+            <!-- Update Profile Button -->
             <button id="updateProfileButton" class="profile-btn">
                 <svg class="icon" viewBox="0 0 24 24">
                     <path
@@ -71,6 +70,7 @@
                 </svg>
                 Update Profile
             </button>
+            <!-- Logout Button -->
             <button id="logoutButton" class="profile-btn logout">
                 <svg class="icon" viewBox="0 0 24 24">
                     <path
@@ -81,8 +81,8 @@
                 Logout
             </button>
         </div>
-    </div>
-    
+    </div>    
+
 
     <!-------------------------------- MAIN ----------------------------------->
     <main>
@@ -91,7 +91,7 @@
             <div class="left">
                 <a class="profile">
                     <div class="profile-photo">
-                        <img src="../src/css/images/profile-1.jpg">
+                        <img src="../src/css/images/defaultProfile.webp" id="sidebarProfilePicture">
                     </div>
                     <div class="handle">
                         <h4></h4>
@@ -242,7 +242,7 @@
                 <!----------------- END OF STORIES -------------------->
                 <form action="" class="messageForm create-post">
                         <div class="profile-photo">
-                            <img src="../src/css/images/profile-1.jpg">
+                            <img src="../src/css/images/defaultProfile.webp" id="profilePicture">
                         </div>
                         <span class="tooltip">Add image/video</span>
                         <input type="file" class="fileInput" id="file" name="file" accept="image/*,video/*"/>
