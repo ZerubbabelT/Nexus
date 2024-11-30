@@ -42,6 +42,7 @@ window.addEventListener("userAuthenticated", (event) => {
                 caption: caption,
                 fileURL: fileURL,
                 fileType: file.type,
+                photoURL: currentUser.photoURL, // Add profile picture URL
                 createdAt: Date.now(),
             });
 
@@ -81,7 +82,7 @@ window.addEventListener("userAuthenticated", (event) => {
 
                 // Display current user's posts instantly
                 if (userPosts.length > 0) {
-                    userPosts.forEach(post => displayPost(post.username, post.caption, post.fileType, post.fileURL));
+                    userPosts.forEach(post => displayPost(post.username, post.caption, post.fileType, post.fileURL, post.photoURL));
                 }
 
                 // Notify about new posts from others
@@ -114,7 +115,7 @@ function displayNotification() {
 function appendNewPosts() {
     // Add new posts to the top of the feed
     newPosts.forEach(post => {
-        displayPost(post.username, post.caption, post.fileType, post.fileURL);
+        displayPost(post.username, post.caption, post.fileType, post.fileURL, post.photoURL);
     });
 
     newPosts.length = 0; // Clear the new posts list
@@ -125,12 +126,12 @@ function displayAllPosts(posts) {
     const feedsContainer = document.querySelector('.feeds');
     feedsContainer.innerHTML = ''; // Clear existing posts
     posts.forEach((postData) => {
-        displayPost(postData.username, postData.caption, postData.fileType, postData.fileURL);
+        displayPost(postData.username, postData.caption, postData.fileType, postData.fileURL, postData.photoURL);
     });
 }
 
 // Display Single Post
-function displayPost(name, caption, fileType, fileUrl) {
+function displayPost(name, caption, fileType, fileUrl, photoUrl) {
     const feedsContainer = document.querySelector('.feeds');
 
     // Create the feed element
@@ -142,7 +143,7 @@ function displayPost(name, caption, fileType, fileUrl) {
         <div class="head">
             <div class="user">
                 <div class="profile-photo">
-                    <img src="../src/css/images/profile-13.jpg" alt="${name}'s profile picture">
+                    <img src="${photoUrl || '../src/css/images/defaultProfile.webp'}" alt="${name}'s profile picture">
                 </div>
                 <div class="info">
                     <h3>${name}</h3>
