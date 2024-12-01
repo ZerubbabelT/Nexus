@@ -1,4 +1,4 @@
-import { db, ref, onValue, push } from './firebaseConfig';
+import { db, ref, onValue, push, update, get, remove } from './firebaseConfig';
 import { storage, storageRef, uploadBytes, getDownloadURL, uploadBytesResumable } from './firebaseConfig';
 import { showToast } from './toast';
 
@@ -36,7 +36,8 @@ window.addEventListener("userAuthenticated", (event) => {
             const fileURL = await getDownloadURL(fileRef);
 
             // Save the post under the user's folder
-            push(userPostRef, {
+            const newPostRef = push(userPostRef);
+            await update(newPostRef, {
                 uid: currentUser.uid,
                 username: currentUser.displayName,
                 caption: caption,
@@ -44,6 +45,7 @@ window.addEventListener("userAuthenticated", (event) => {
                 fileType: file.type,
                 photoURL: currentUser.photoURL, // Add profile picture URL
                 createdAt: Date.now(),
+                likes: {} // Initialize likes as an empty object
             });
 
             messageForm.reset();
@@ -62,7 +64,7 @@ window.addEventListener("userAuthenticated", (event) => {
             Object.keys(postsData).forEach((userId) => {
                 const userPosts = postsData[userId];
                 Object.keys(userPosts).forEach((postId) => {
-                    allPosts.push(userPosts[postId]);
+                    allPosts.push({ ...userPosts[postId], postId, userId });
                 });
             });
 
@@ -82,7 +84,7 @@ window.addEventListener("userAuthenticated", (event) => {
 
                 // Display current user's posts instantly
                 if (userPosts.length > 0) {
-                    userPosts.forEach(post => displayPost(post.username, post.caption, post.fileType, post.fileURL, post.photoURL));
+                    userPosts.forEach(post => displayPost(post.username, post.caption, post.fileType, post.fileURL, post.photoURL, post.postId, post.likes, post.uid));
                 }
 
                 // Notify about new posts from others
@@ -115,7 +117,7 @@ function displayNotification() {
 function appendNewPosts() {
     // Add new posts to the top of the feed
     newPosts.forEach(post => {
-        displayPost(post.username, post.caption, post.fileType, post.fileURL, post.photoURL);
+        displayPost(post.username, post.caption, post.fileType, post.fileURL, post.photoURL, post.postId, post.likes, post.uid);
     });
 
     newPosts.length = 0; // Clear the new posts list
@@ -126,13 +128,15 @@ function displayAllPosts(posts) {
     const feedsContainer = document.querySelector('.feeds');
     feedsContainer.innerHTML = ''; // Clear existing posts
     posts.forEach((postData) => {
-        displayPost(postData.username, postData.caption, postData.fileType, postData.fileURL, postData.photoURL);
+        displayPost(postData.username, postData.caption, postData.fileType, postData.fileURL, postData.photoURL, postData.postId, postData.likes, postData.uid);
     });
 }
 
 // Display Single Post
-function displayPost(name, caption, fileType, fileUrl, photoUrl) {
+function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, userId) {
     const feedsContainer = document.querySelector('.feeds');
+    const likeCount = likes ? Object.keys(likes).length : '';
+    const userLiked = likes && currentUser.uid in likes;
 
     // Create the feed element
     const feed = document.createElement('div');
@@ -165,7 +169,14 @@ function displayPost(name, caption, fileType, fileUrl, photoUrl) {
         </div>` : ''}
         <div class="action-buttons">
             <div class="interaction-buttons">
-                <span><i class="uil uil-heart"></i></span>
+                <span>
+                    <i class="${userLiked ? 'fa-solid fa-heart' : 'uil uil-heart'}" 
+                        style="${userLiked ? 'color: #ff0000;' : ''}"
+                        data-post-id="${postId}"
+                        data-user-id="${userId}"    
+                    ></i>
+                </span>
+                <span class="like-count" data-post-id="${postId}">${likeCount}</span>
                 <span><i class="uil uil-comment-dots"></i></span>
                 <span><i class="uil uil-share-alt"></i></span>
             </div>
@@ -184,4 +195,44 @@ function displayPost(name, caption, fileType, fileUrl, photoUrl) {
 
     // Append the new feed to the feeds container
     feedsContainer.prepend(feed);
+    
+    // Add event listener to like button
+    const likeButton = feed.querySelector(`[data-post-id="${postId}"]`);
+    likeButton.addEventListener('click', () => {
+        handleLike(postId, userId);
+    });
+
+}
+
+// Handle Like/Unlike Functionality
+async function handleLike(postId, userId) {
+    const postRef = ref(db, `posts/${userId}/${postId}/likes/${currentUser.uid}`);
+    const snapshot = await get(postRef);
+
+    if (snapshot.exists()) {
+        // User has liked the post, so unlike it
+        await remove(postRef);
+    } else {
+        // User has not liked the post, so like it
+        await update(ref(db, `posts/${userId}/${postId}/likes`), { [currentUser.uid]: true });
+    }
+
+    // Fetch the updated likes
+    const updatedSnapshot = await get(ref(db, `posts/${userId}/${postId}/likes`));
+    const likeButton = document.querySelector(`[data-post-id="${postId}"]`);
+    const likeCountSpan = document.querySelector(`.like-count[data-post-id="${postId}"]`);
+    const likeCount = updatedSnapshot.exists() ? Object.keys(updatedSnapshot.val()).length : 0;
+    const userLiked = updatedSnapshot.exists() && updatedSnapshot.hasChild(currentUser.uid);
+
+    // Update the UI
+    if (userLiked) {
+        likeButton.classList.remove('uil', 'uil-heart');
+        likeButton.classList.add('fa-solid', 'fa-heart');
+        likeButton.style.color = '#ff0000';
+    } else {
+        likeButton.classList.remove('fa-solid', 'fa-heart');
+        likeButton.classList.add('uil', 'uil-heart');
+        likeButton.style.color = '';
+    }
+    likeCountSpan.textContent = likeCount;
 }
