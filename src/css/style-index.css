@@ -1125,3 +1125,6 @@ MEDIA QUERIES FOR SMALL TABLETS AND MOBILE PHONES
         transform: translateY(0);
     }
 }
+.interaction-buttons > span {
+    cursor: pointer;
+}
