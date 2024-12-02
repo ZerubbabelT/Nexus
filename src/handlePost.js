@@ -45,7 +45,8 @@ window.addEventListener("userAuthenticated", (event) => {
                 fileType: file.type,
                 photoURL: currentUser.photoURL, // Add profile picture URL
                 createdAt: Date.now(),
-                likes: {} // Initialize likes as an empty object
+                likes: {}, // Initialize likes as an empty object
+                comments : {}
             });
 
             messageForm.reset();
@@ -177,7 +178,9 @@ function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, 
                     ></i>
                 </span>
                 <span class="like-count" data-post-id="${postId}">${likeCount}</span>
-                <span><i class="uil uil-comment-dots"></i></span>
+                <span class="comments-toggle" data-post-id="${postId}" data-user-id="${userId}">
+                    <i class="uil uil-comment-dots"></i>
+                </span>
                 <span><i class="uil uil-share-alt"></i></span>
             </div>
             <div class="bookmark">
@@ -188,8 +191,15 @@ function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, 
             <p><b>${name}</b> ${caption}
             <span class="harsh-tag">#hashtag</span></p>
         </div>
-        <div class="comments text-muted">
-            View all comments
+
+        <div class="comments-section" data-post-id="${postId}" style="display: none;">
+            <div class="add-comment">
+                <input type="text" class="comment-input" placeholder="Add a comment..." data-post-id="${postId}">
+                <button class="submit-comment" data-post-id="${postId}">Post</button>
+            </div>
+            <div class="comments-list">
+                
+            </div>
         </div>
     `;
 
@@ -201,7 +211,63 @@ function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, 
     likeButton.addEventListener('click', () => {
         handleLike(postId, userId);
     });
+    // toggling button
+    const commentsToggle = feed.querySelector(`.comments-toggle[data-post-id="${postId}"]`);
+    const commentsSection = feed.querySelector(`.comments-section[data-post-id="${postId}"]`);
+    commentsToggle.addEventListener('click', () => {
+        const isVisible = commentsSection.style.display === "block";
+        commentsSection.style.display = isVisible ? 'none' : 'block';
+        if (!isVisible){
+            loadComments(postId, userId, commentsSection.querySelector(".comments-list"));
+        }
+    })
+    // adding comments
+    const commentInput = feed.querySelector(`.comment-input[data-post-id="${postId}"]`);
+    const submitCommentButton = feed.querySelector(`.submit-comment[data-post-id="${postId}"]`);
+    submitCommentButton.addEventListener('click', () => {
+        const commentText = commentInput.value.trim();
+        if (commentText){
+            addComment(postId, userId, commentText);
+            commentInput.value = '';
+        }
+    })
+}
 
+// Loading comments in descending order
+async function loadComments(postId, userId, commentList) {
+    const commentRef = ref(db, `posts/${userId}/${postId}/comments`);
+    onValue(commentRef, (snapshot) => {
+        const comments = snapshot.val();
+        commentList.innerHTML = ''; // Clear previous comments
+
+        if (comments) {
+            // Convert comments to an array and sort by `createdAt` in descending order
+            const sortedComments = Object.entries(comments)
+                .map(([commentId, commentData]) => ({ id: commentId, ...commentData }))
+                .sort((a, b) => b.createdAt - a.createdAt);
+
+            // Create and append sorted comment elements
+            sortedComments.forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.className = 'comment';
+                commentElement.innerHTML = `<strong>${comment.username}</strong> : ${comment.text}`;
+                commentList.appendChild(commentElement);
+            });
+        } else {
+            commentList.innerHTML = '<p>No comments yet! Be the first to comment!</p>';
+        }
+    });
+}
+
+
+// adding comments
+async function addComment(postId, userId, text){
+    const commentRef = ref(db, `posts/${userId}/${postId}/comments/`);
+    await push(commentRef, {
+        username: currentUser.displayName,
+        text: text,
+        createdAt: Date.now()
+    })
 }
 
 // Handle Like/Unlike Functionality
