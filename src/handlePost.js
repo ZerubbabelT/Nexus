@@ -190,13 +190,15 @@ function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, 
         <div class="caption">
             <p><b>${name}</b> ${caption}
             <span class="harsh-tag">#hashtag</span></p>
+            <br/>
         </div>
 
         <div class="comments-section" data-post-id="${postId}" style="display: none;">
             <div class="add-comment">
-                <input type="text" class="comment-input" placeholder="Add a comment..." data-post-id="${postId}">
-                <button class="submit-comment" data-post-id="${postId}">Post</button>
+                <input maxlength="250" type="text" class="comment-input" placeholder="Add a comment..." data-post-id="${postId}">
+                <button class="submit-comment" data-post-id="${postId}">Add</button>
             </div>
+            <br/>
             <div class="comments-list">
                 
             </div>
@@ -250,7 +252,14 @@ async function loadComments(postId, userId, commentList) {
             sortedComments.forEach(comment => {
                 const commentElement = document.createElement('div');
                 commentElement.className = 'comment';
-                commentElement.innerHTML = `<strong>${comment.username}</strong> : ${comment.text}`;
+                commentElement.innerHTML = `
+                
+                <span><img class="pp" src='${comment.photoURL}'/></span>
+                <div class="toright">
+                    <strong style="font-size=:2.5rem;">${comment.username}</strong> 
+                    <p>${comment.text}</p>
+                </div>
+                `;
                 commentList.appendChild(commentElement);
             });
         } else {
@@ -265,6 +274,7 @@ async function addComment(postId, userId, text){
     const commentRef = ref(db, `posts/${userId}/${postId}/comments/`);
     await push(commentRef, {
         username: currentUser.displayName,
+        photoURL: currentUser.photoURL,
         text: text,
         createdAt: Date.now()
     })

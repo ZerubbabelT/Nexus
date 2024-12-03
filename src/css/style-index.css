@@ -1129,3 +1129,37 @@ MEDIA QUERIES FOR SMALL TABLETS AND MOBILE PHONES
 .interaction-buttons > span {
     cursor: pointer;
 }
+.comment-input{
+    width: 80%;
+    background-color: transparent;
+    border-bottom: 1px solid #c4c1c1;
+}
+.comment-input:focus{
+    border-bottom: 1px solid #000;
+}
+.submit-comment{
+    width: 10%;
+    background-color: #6b4de6;
+    padding: 5px 10px;
+    border-radius: 15px;
+    color: white;
+    cursor: pointer;
+    margin-left: 20px;
+}
+.submit-comment:hover{
+    background-color: #9980ff;
+}
+.pp{
+    width: 2.7rem;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.comment {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.toright{
+    margin-left: 15px;
+}
