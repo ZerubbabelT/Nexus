@@ -117,7 +117,9 @@ async function updateOldPostsProfilePicture(uid, newPhotoURL) {
             const userPosts = snapshot.val();
             for (let postId in userPosts) { 
                 const postRef = ref(db, `posts/${uid}/${postId}`);
-                update(postRef,{photoURL : newPhotoURL}) 
+                const commentRef = ref(db, `posts/${uid}/${postId}/comments`)
+                update(postRef,{photoURL : newPhotoURL})
+                update(commentRef, {photoURL : newPhotoURL}) 
             }
         }
     }

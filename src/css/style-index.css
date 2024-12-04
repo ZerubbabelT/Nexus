@@ -61,6 +61,8 @@ body {
 img {
     display: block;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .btn {
@@ -1162,4 +1164,16 @@ MEDIA QUERIES FOR SMALL TABLETS AND MOBILE PHONES
 }
 .toright{
     margin-left: 15px;
+}
+.remove {
+    color:gray;
+    text-decoration:underline;
+    margin-left: 20px;
+    cursor: pointer;
+}
+.comment p {
+    word-wrap: break-word; /* Break long words to fit within the container */
+    white-space: normal;   /* Allow text to wrap to the next line */
+    max-width: 100%;    
+    display: inline-block;
 }

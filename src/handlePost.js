@@ -247,20 +247,36 @@ async function loadComments(postId, userId, commentList) {
             const sortedComments = Object.entries(comments)
                 .map(([commentId, commentData]) => ({ id: commentId, ...commentData }))
                 .sort((a, b) => b.createdAt - a.createdAt);
-
-            // Create and append sorted comment elements
-            sortedComments.forEach(comment => {
+                // Create and append sorted comment elements
+                sortedComments.forEach(comment => {
                 const commentElement = document.createElement('div');
+                const commentId = comment.id;
                 commentElement.className = 'comment';
                 commentElement.innerHTML = `
-                
-                <span><img class="pp" src='${comment.photoURL}'/></span>
+                <span><img class="pp" src='${comment.photoURL || '../src/css/images/defaultProfile.webp'} '/></span>
                 <div class="toright">
-                    <strong style="font-size=:2.5rem;">${comment.username}</strong> 
+                    <strong style="font-size=:2.5rem;">${comment.username}</strong>
+                    ${
+                        currentUser.uid === userId || currentUser.uid === comment.uid
+                            ? `<span class="remove" data-comment-id="${commentId}" data-post-id="${postId}" data-user-id="${userId}">remove</span>`
+                            : ''
+                    }
                     <p>${comment.text}</p>
                 </div>
                 `;
+                // removing comments
                 commentList.appendChild(commentElement);
+                commentList.addEventListener('click', async(event) => {
+                    if (event.target.classList.contains('remove')){
+                        const postId = event.target.dataset.postId;
+                        const userId = event.target.dataset.userId;
+                        const commentId = event.target.dataset.commentId;
+
+                        const commentRef = ref(db, `posts/${userId}/${postId}/comments/${commentId}`)
+                        await remove(commentRef)
+                        showToast("comment successfully removed",'success')
+                    }
+                })
             });
         } else {
             commentList.innerHTML = '<p>No comments yet! Be the first to comment!</p>';
@@ -268,11 +284,11 @@ async function loadComments(postId, userId, commentList) {
     });
 }
 
-
 // adding comments
 async function addComment(postId, userId, text){
     const commentRef = ref(db, `posts/${userId}/${postId}/comments/`);
     await push(commentRef, {
+        uid: currentUser.uid,
         username: currentUser.displayName,
         photoURL: currentUser.photoURL,
         text: text,
