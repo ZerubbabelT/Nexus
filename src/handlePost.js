@@ -1,4 +1,4 @@
-import { db, ref, onValue, push, update, get, remove } from './firebaseConfig';
+import { db, ref, onValue, push, update, get, remove, onChildRemoved } from './firebaseConfig';
 import { storage, storageRef, uploadBytes, getDownloadURL, uploadBytesResumable } from './firebaseConfig';
 import { showToast } from './toast';
 
@@ -85,7 +85,7 @@ window.addEventListener("userAuthenticated", (event) => {
 
                 // Display current user's posts instantly
                 if (userPosts.length > 0) {
-                    userPosts.forEach(post => displayPost(post.username, post.caption, post.fileType, post.fileURL, post.photoURL, post.postId, post.likes, post.uid));
+                    userPosts.forEach(post => displayPost(post.username, post.caption, post.fileType, post.fileURL, post.photoURL, post.postId, post.likes, post.uid, post.comments));
                 }
 
                 // Notify about new posts from others
@@ -118,7 +118,7 @@ function displayNotification() {
 function appendNewPosts() {
     // Add new posts to the top of the feed
     newPosts.forEach(post => {
-        displayPost(post.username, post.caption, post.fileType, post.fileURL, post.photoURL, post.postId, post.likes, post.uid);
+        displayPost(post.username, post.caption, post.fileType, post.fileURL, post.photoURL, post.postId, post.likes, post.uid, post.comments);
     });
 
     newPosts.length = 0; // Clear the new posts list
@@ -129,19 +129,24 @@ function displayAllPosts(posts) {
     const feedsContainer = document.querySelector('.feeds');
     feedsContainer.innerHTML = ''; // Clear existing posts
     posts.forEach((postData) => {
-        displayPost(postData.username, postData.caption, postData.fileType, postData.fileURL, postData.photoURL, postData.postId, postData.likes, postData.uid);
+        displayPost(postData.username, postData.caption, postData.fileType, postData.fileURL, postData.photoURL, postData.postId, postData.likes, postData.uid, postData.comments);
     });
 }
 
 // Display Single Post
-function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, userId) {
+function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, userId, comments) {
     const feedsContainer = document.querySelector('.feeds');
+    // like count
     const likeCount = likes ? Object.keys(likes).length : '';
     const userLiked = likes && currentUser.uid in likes;
+    // comment count
+    const commentCount = comments ? Object.keys(comments).length : '';
+    const userCommented = comments && currentUser.uid in comments; 
 
     // Create the feed element
     const feed = document.createElement('div');
     feed.className = 'feed';
+    feed.setAttribute('data-main-post-id', postId);
 
     // Construct the feed's inner HTML
     feed.innerHTML = `
@@ -156,7 +161,34 @@ function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, 
                 </div>
             </div>
             <span class="edit">
-                <i class="uil uil-ellipsis-h"></i>
+                <div class="containerd">
+                    <div class="more" data-post-more-id="${postId}">
+                        <button class="more-btn">
+                            <span class="more-dot"></span>
+                            <span class="more-dot"></span>
+                            <span class="more-dot"></span>
+                        </button>
+                        <div class="more-menu hiddenD">
+                            <div class="more-menu-caret">
+                                <div class="more-menu-caret-outer"></div>
+                                <div class="more-menu-caret-inner"></div>
+                            </div>
+                            <ul class="more-menu-items" tabindex="-1" role="menu" aria-labelledby="more-btn">
+                            <li class="more-menu-item" data-post-del-id="${postId}"  role="presentation">
+                            ${  currentUser.uid === userId 
+                                ? `<button type="button" class="more-menu-btn" role="menuitem" id="deleteBtn">Delete</button>
+                            ` : ''}
+                            </li>
+                                <li class="more-menu-item" role="presentation">
+                                    <button type="button" class="more-menu-btn" role="menuitem" id="blockBtn">Block</button>
+                                </li>
+                                <li class="more-menu-item" role="presentation">
+                                    <button type="button" class="more-menu-btn" role="menuitem" id="reportBtn">Report</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </span>
         </div>
         ${fileType.startsWith("image/") ? `
@@ -171,20 +203,25 @@ function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, 
         <div class="action-buttons">
             <div class="interaction-buttons">
                 <span>
-                    <i class="${userLiked ? 'fa-solid fa-heart' : 'uil uil-heart'}" 
+                    <i class="like ${userLiked ? 'fa-solid fa-heart' : 'uil uil-heart'}" 
                         style="${userLiked ? 'color: #ff0000;' : ''}"
                         data-post-id="${postId}"
                         data-user-id="${userId}"    
                     ></i>
                 </span>
                 <span class="like-count" data-post-id="${postId}">${likeCount}</span>
+
                 <span class="comments-toggle" data-post-id="${postId}" data-user-id="${userId}">
                     <i class="uil uil-comment-dots"></i>
                 </span>
+                <span class="comment-count" data-post-id="${postId}">${commentCount}</span>
+
                 <span><i class="uil uil-share-alt"></i></span>
             </div>
             <div class="bookmark">
-                <span><i class="uil uil-bookmark-full"></i></span>
+                <span class="share" data-post-id="${postId}" data-user-id="${userId}">
+                    <i class="uil uil-bookmark-full"></i>
+                </span>
             </div>
         </div>
         <div class="caption">
@@ -209,7 +246,7 @@ function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, 
     feedsContainer.prepend(feed);
     
     // Add event listener to like button
-    const likeButton = feed.querySelector(`[data-post-id="${postId}"]`);
+    const likeButton = feed.querySelector(`.like[data-post-id="${postId}"]`);
     likeButton.addEventListener('click', () => {
         handleLike(postId, userId);
     });
@@ -233,8 +270,66 @@ function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, 
             commentInput.value = '';
         }
     })
+    // More button functionality
+    var el = document.querySelector(`.more[data-post-more-id="${postId}"]`);
+    var btn = el.querySelector('.more-btn');
+    var menu = el.querySelector('.more-menu');
+    var visible = false;
+
+    function showMenu(e) {
+        e.preventDefault();
+        if (!visible) {
+            visible = true;
+            menu.classList.remove('hiddenD'); // Show menu
+            document.addEventListener('mousedown', hideMenu, false);
+        }
+    }
+
+    function hideMenu(e) {
+        if (btn.contains(e.target)) {
+            return; // Ignore clicks on the button
+        }
+        if (menu.contains(e.target)) {
+            return; // Ignore clicks inside the menu
+        }
+        if (visible) {
+            visible = false;
+            menu.classList.add('hiddenD'); // Hide menu
+            document.removeEventListener('mousedown', hideMenu);
+        }
+    }
+    btn.addEventListener('click', showMenu);
+ 
+    const delBtn = document.querySelector(`[data-post-del-id="${postId}"]`);
+    delBtn.addEventListener('click', () => {
+        deletePost(userId,postId)
+    })
+    // Real-time listener to update UI when a post is removed
+    function listenForPostChanges(userId) {
+        const postsRef = ref(db, `posts/${userId}`);
+
+        // Listen for post changes (including post deletions)
+        onChildRemoved(postsRef, (snapshot) => {
+            const removedPostId = snapshot.key;
+            const removedPostElement = document.querySelector(`.feed[data-main-post-id="${removedPostId}"]`);
+            if (removedPostElement) {
+                removedPostElement.remove(); // Remove post element from the feed
+            }
+        });
+    }
+    listenForPostChanges(userId);
 }
 
+// deleting posts
+async function deletePost(userId, postId){
+    const postRef = ref(db, `posts/${userId}/${postId}`);
+    await remove(postRef);
+    const postElement = document.querySelector(`.feed[data-main-post-id="${postId}"]`); 
+    if (postElement) {
+        postElement.remove();
+    }
+    showToast("Post removed successfully",'success')
+}
 // Loading comments in descending order
 async function loadComments(postId, userId, commentList) {
     const commentRef = ref(db, `posts/${userId}/${postId}/comments`);

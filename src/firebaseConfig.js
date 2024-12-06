@@ -12,7 +12,7 @@ import { getAuth,
 import { getDatabase,
   ref,
   push, update, remove,
-  onChildAdded,get,onValue
+  onChildAdded,get,onValue,onChildRemoved,
 } from "firebase/database";
 import { getStorage,
   ref as storageRef, 
@@ -55,7 +55,7 @@ export { auth,
   db,
   ref,
   push,
-  onChildAdded,get,onValue,update,remove,
+  onChildAdded,get,onValue,update,remove,onChildRemoved,
   
   storage,
   storageRef, 
