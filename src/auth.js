@@ -19,7 +19,7 @@ const signupForm = document.querySelector(".signupForm");
 const googleBtn = document.querySelectorAll(".google-btn")
 const loadingScreen = document.getElementById("loading-screen");
 const mainContent = document.getElementById("main-content");
-const logoutBtn = document.querySelector(".logout");
+const logoutBtn = document.querySelector("#logoutButton");
 
 const profileFileInput = document.getElementById("profileFile"); //file input for pp
 const updateProfileButton = document.getElementById("updateProfileButton"); // update button
