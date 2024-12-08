@@ -85,7 +85,7 @@ window.addEventListener("userAuthenticated", (event) => {
 
                 // Display current user's posts instantly
                 if (userPosts.length > 0) {
-                    userPosts.forEach(post => displayPost(post.username, post.caption, post.fileType, post.fileURL, post.photoURL, post.postId, post.likes, post.uid, post.comments));
+                    userPosts.forEach(post => displayPost(post.username, post.caption, post.fileType, post.fileURL, post.photoURL, post.postId, post.likes, post.uid, post.comments, post.createdAt));
                 }
 
                 // Notify about new posts from others
@@ -118,7 +118,7 @@ function displayNotification() {
 function appendNewPosts() {
     // Add new posts to the top of the feed
     newPosts.forEach(post => {
-        displayPost(post.username, post.caption, post.fileType, post.fileURL, post.photoURL, post.postId, post.likes, post.uid, post.comments);
+        displayPost(post.username, post.caption, post.fileType, post.fileURL, post.photoURL, post.postId, post.likes, post.uid, post.comments, post.createdAt);
     });
 
     newPosts.length = 0; // Clear the new posts list
@@ -129,12 +129,31 @@ function displayAllPosts(posts) {
     const feedsContainer = document.querySelector('.feeds');
     feedsContainer.innerHTML = ''; // Clear existing posts
     posts.forEach((postData) => {
-        displayPost(postData.username, postData.caption, postData.fileType, postData.fileURL, postData.photoURL, postData.postId, postData.likes, postData.uid, postData.comments);
+        displayPost(postData.username, postData.caption, postData.fileType, postData.fileURL, postData.photoURL, postData.postId, postData.likes, postData.uid, postData.comments, postData.createdAt);
     });
 }
 
+// timestamp
+function time(createdAt) {
+    const agoTime = Date.now() - createdAt;
+    const minute = Math.floor(agoTime / 1000 / 60);
+    const hour = Math.floor(minute / 60);
+    const day = Math.floor(hour / 24);
+    const week = Math.floor(day / 7);
+    const month = Math.floor(day / 30); // More realistic average for a month
+    const year = Math.floor(day / 365); // Approximation for a year
+
+    if (minute < 1) return "Just now";
+    else if (minute < 60) return `${minute} minute${minute > 1 ? "s" : ""} ago`;
+    else if (hour < 24) return `${hour} hour${hour > 1 ? "s" : ""} ago`;
+    else if (day < 7) return `${day} day${day > 1 ? "s" : ""} ago`;
+    else if (day < 30) return `${week} week${week > 1 ? "s" : ""} ago`;
+    else if (day < 365) return `${month} month${month > 1 ? "s" : ""} ago`;
+    else return `${year} year${year > 1 ? "s" : ""} ago`;
+}
+
 // Display Single Post
-function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, userId, comments) {
+function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, userId, comments, timestamp) {
     const feedsContainer = document.querySelector('.feeds');
     // like count
     const likeCount = likes ? Object.keys(likes).length : '';
@@ -157,7 +176,7 @@ function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, 
                 </div>
                 <div class="info">
                     <h3>${name}</h3>
-                    <small>Just now</small>
+                    <small>${time(timestamp)}</small>
                 </div>
             </div>
             <span class="edit">
