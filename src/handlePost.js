@@ -151,7 +151,7 @@ function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, 
 
     // Construct the feed's inner HTML
     feed.innerHTML = `
-        <div class="head">
+        <div class="head" id="head">
             <div class="user">
                 <div class="profile-photo">
                     <img src="${photoUrl || '../src/css/images/defaultProfile.webp'}" alt="${name}'s profile picture">
@@ -319,6 +319,71 @@ function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, 
         });
     }
     listenForPostChanges(userId);
+    // Selecting necessary elements
+    const feeds = document.querySelector(".feeds");
+    const backBtn = document.querySelector(".backBtn");
+    const stories = document.querySelector(".stories");
+    const messageForm = document.querySelector(".messageForm");
+    const profileHeader = document.querySelector(".ph");
+    const profileHeaderImage = document.getElementById("profileHeaderImage");
+    const profileHeaderName = document.getElementById("profileHeaderName");
+    const profileHeaderBio = document.getElementById("profileHeaderBio");
+
+    // Add event listener for each post head
+    document.querySelectorAll(".feed .user").forEach((head) => {
+        head.addEventListener("click", () => {
+            // Get user info from the clicked post
+            const userName = head.querySelector("h3").textContent.trim();
+            const profileImage = head.querySelector(".profile-photo img").src;
+
+            // Hide stories and post form
+            stories.style.display = "none";
+            messageForm.style.display = "none";
+
+            // Show "Back to Home" button
+            backBtn.style.display = "block";
+
+            // Show profile header and populate data
+            profileHeader.style.display = "block";
+            profileHeaderName.textContent = userName;
+            profileHeaderImage.src = profileImage;
+
+            // Example bio (replace with real data if available)
+            profileHeaderBio.textContent = `Welcome to ${userName}'s profile!`;
+
+            // Filter posts
+            const allFeeds = feeds.querySelectorAll(".feed");
+            allFeeds.forEach((feed) => {
+                const feedUserName = feed.querySelector(".head h3").textContent.trim();
+                if (feedUserName !== userName) {
+                    feed.style.display = "none";
+                } else {
+                    feed.style.display = "block";
+                }
+            });
+        });
+    });
+
+    // Add event listener for "Back to Home" button
+    backBtn.addEventListener("click", () => {
+        // Show stories and post form
+        stories.style.display = "flex";
+        messageForm.style.display = "flex";
+
+        // Hide "Back to Home" button
+        backBtn.style.display = "none";
+
+        // Hide profile header
+        profileHeader.style.display = "none";
+
+        // Show all posts
+        const allFeeds = feeds.querySelectorAll(".feed");
+        allFeeds.forEach((feed) => {
+            feed.style.display = "block";
+        });
+    });
+
+
 }
 
 // deleting posts
@@ -331,3 +396,4 @@ async function deletePost(userId, postId){
     }
     showToast("Post removed successfully",'success')
 }
+
