@@ -30,40 +30,52 @@ const sideBarProfilePicture = document.getElementById("sidebarProfilePicture"); 
 const defaultProfilePicture = 'https://i.imgur.com/3JNYqje.jpeg';
 
 // Add a short delay to display loading screen before auth check
+// Add a short delay to display loading screen before auth check
 setTimeout(() => {
     onAuthStateChanged(auth, (user) => {
         const currentPage = window.location.pathname.split("/").pop();
 
+        // Check if the user is at the root domain (/)
+        if (window.location.pathname === "/") {
+            if (user) {
+                // If authenticated, redirect to index.html
+                window.location.href = "index.html";
+            } else {
+                // If not authenticated, redirect to form.html (login page)
+                window.location.href = "form.html";
+            }
+        }
+
         if (user) {
             // Authenticated user
-            
-            // dispatching custom event to notify handlePost.js for the user
             const userAuthenticatedEvent = new CustomEvent('userAuthenticated', {
                 detail: user,
-            })
-            window.dispatchEvent(userAuthenticatedEvent)
+            });
+            window.dispatchEvent(userAuthenticatedEvent);
 
             if (currentPage === "form.html") {
                 window.location.href = "index.html";
             } else if(currentPage === "index.html") {
-                const name = document.querySelector(".left .handle h4")
-                const profileName = document.getElementById("profileName")
-                if(name){
+                const name = document.querySelector(".left .handle h4");
+                const profileName = document.getElementById("profileName");
+
+                if (name) {
                     name.textContent = user.displayName;
                     profileName.textContent = `Hi, ${user.displayName}`;
-                // Display profile picture if available 
-                if (user.photoURL) { 
-                    profilePictureMain.src = user.photoURL; 
-                    profilePictureDropdown.src = user.photoURL;
-                    sideBarProfilePicture.src = user.photoURL;
-                    profilePicture.src = user.photoURL;
-                } else { 
-                    profilePictureMain.src = defaultProfilePicture; // Fallback if no profile picture 
-                    profilePictureDropdown.src = defaultProfilePicture;
-                    sideBarProfilePicture.src = defaultProfilePicture;
-                    profilePicture.src = defaultProfilePicture; }
+                    // Display profile picture if available 
+                    if (user.photoURL) { 
+                        profilePictureMain.src = user.photoURL; 
+                        profilePictureDropdown.src = user.photoURL;
+                        sideBarProfilePicture.src = user.photoURL;
+                        profilePicture.src = user.photoURL;
+                    } else { 
+                        profilePictureMain.src = defaultProfilePicture; // Fallback if no profile picture 
+                        profilePictureDropdown.src = defaultProfilePicture;
+                        sideBarProfilePicture.src = defaultProfilePicture;
+                        profilePicture.src = defaultProfilePicture;
+                    }
                 }
-                loadingScreen.classList.add("fade-out"); // Add fade-out animation
+                loadingScreen.classList.add("fade-out");
                 setTimeout(() => {
                     loadingScreen.style.display = "none";
                     mainContent.style.display = "block";
@@ -74,15 +86,16 @@ setTimeout(() => {
             if (currentPage === "index.html") {
                 window.location.href = "form.html";
             } else {
-                loadingScreen.classList.add("fade-out"); // Add fade-out animation
+                loadingScreen.classList.add("fade-out");
                 setTimeout(() => {
                     loadingScreen.style.display = "none";
                     mainContent.style.display = "block";
-                }, 500); // Match with fade-out duration
+                }, 500);
             }
         }
     });
 }, 1000);
+
 if (updateProfileButton){
     updateProfileButton.addEventListener('click', () => {
         profileFileInput.click()
