@@ -57,7 +57,7 @@ async function loadComments(postId, userId, commentList) {
                 const commentId = comment.id;
                 commentElement.className = 'comment';
                 commentElement.innerHTML = `
-                <span><img class="pp" src='${comment.photoURL || '../src/css/images/defaultProfile.webp'} '/></span>
+                <span><img class="pp" src='${comment.photoURL || 'https://i.imgur.com/3JNYqje.jpeg'} '/></span>
                 <div class="toright">
                     <strong style="font-size=:2.5rem;">${comment.username}</strong>
                     ${

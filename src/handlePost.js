@@ -154,7 +154,7 @@ function displayPost(name, caption, fileType, fileUrl, photoUrl, postId, likes, 
         <div class="head" id="head">
             <div class="user">
                 <div class="profile-photo">
-                    <img src="${photoUrl || '../src/css/images/defaultProfile.webp'}" alt="${name}'s profile picture">
+                    <img src="${photoUrl || 'https://i.imgur.com/3JNYqje.jpeg'}" alt="${name}'s profile picture">
                 </div>
                 <div class="info">
                     <h3>${name}</h3>

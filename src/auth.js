@@ -27,7 +27,7 @@ const profilePictureDropdown = document.getElementById("profilePictureDropdown")
 const profilePictureMain = document.getElementById("mainProfileImage"); // nav pp
 const profilePicture = document.getElementById("profilePicture"); // form pp
 const sideBarProfilePicture = document.getElementById("sidebarProfilePicture"); // left side pp
-const defaultProfilePicture = '../src/css/images/defaultProfile.webp';
+const defaultProfilePicture = 'https://i.imgur.com/3JNYqje.jpeg';
 
 // Add a short delay to display loading screen before auth check
 setTimeout(() => {
@@ -132,18 +132,19 @@ if (signupForm){
     signupForm.addEventListener('submit', async(e) => {
         e.preventDefault()
         // Validating input
-        let name = signupForm.displayName.value.trim()
-        let email = signupForm.email.value
-        let password = signupForm.password.value
-        let passwordCheck = signupForm.passwordCheck.value
-        if (name.length < 2){
-            showToast("Name too short","error")
+        let name = signupForm.displayName.value.trim();
+        let email = signupForm.email.value.trim();
+        let password = signupForm.password.value;
+        let passwordCheck = signupForm.passwordCheck.value;
+        if (!name || name.trim().length < 2) {
+            showToast("Name is required and should be at least 2 characters long", "error");
+            return;
         }
         else if (email.length < 2){
             showToast("Email too short","error")
         }
         else if (password.length < 8){
-            showToast("Password must atleast contain 8 characters","error")
+            showToast("Password must contain at least 8 characters","error")
         }
         else if (password !== passwordCheck){
             showToast("password Doesn\'t match","error")            
