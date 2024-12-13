@@ -1,0 +1,24 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "posts": {
+      "$userId": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid == $userId", 
+        "$postId": {
+          "likes": {
+            ".read": "auth != null",
+            ".write": "auth != null && !(data.exists() && data.child(auth.uid).exists())" 
+          },
+          "comments": {
+            ".read": "auth != null",
+            "$commentId": {
+              ".write": "auth != null && (auth.uid == $userId || auth.uid == data.child('uid').val())" 
+            }
+          }
+        }
+      }
+    }
+  }
+}
